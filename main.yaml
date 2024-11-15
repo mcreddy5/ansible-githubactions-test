@@ -1,0 +1,89 @@
+---
+#- name: Playbook to Install Mongodb Ops Manager Agent
+ # hosts: opsmanager.stageinternal.com
+  #become: true
+  #remote_user: ec2-user
+  #gather_facts: no 
+  #roles:
+  #  - ops-mongodb-agent
+#- name: Playbook to Install Mongodb Ops Manager
+ # hosts: opsmanager.stageinternal.com
+  #become: true
+  #remote_user: ec2-user
+  #gather_facts: no 
+  #roles:
+   #- ops-manager
+
+
+
+
+#- name: Playbook to Install hc and mancenter
+ # hosts: hc1.stageinternal.com
+  #become: true
+  #remote_user: ec2-user
+  #gather_facts: no
+  #roles:
+   # - hazelcast
+    #- hc-mancenter
+#- name: playbook to install postgres
+ # hosts: postgres.stageinternal.com
+  #become: true
+  #remote_user: ubuntu
+  #gather_facts: no
+  #roles:
+   # - postgres 
+
+
+#- name: Playbook to Install ELK Stack  
+ # hosts:  elk.stageinternal.com
+  #become: true
+  #remote_user: ec2-user
+  #gather_facts: no 
+  #roles:
+   # - elk-stack
+#- name: Playbook to Install Node Exporter,Cloudwatch Agent and Updating System packages 
+ # hosts: all 
+ # become: true
+ #remote_user: ec2-user
+ # roles:
+  #  - common
+
+#- name: Playbook to copy id_rsa & id_rsa.pubkey to bastion
+#  hosts: bastion.stageinternal.com
+ #become: true
+ # remote_user: ec2-user
+ # roles:
+  #  - copy-pem
+
+#- name: Playbook to copy ssh key to all the servres 
+ # hosts: all
+  #become: true
+  #remote_user: ec2-user
+  #roles:
+   # - copy-pem-all 
+- name: Playbook to Install RMQ
+  hosts: rabbitMQ.stageinternal.com
+  become: true
+  remote_user: ec2-user
+  gather_facts: no
+  roles:
+    - rabbitMQ       
+
+#- name: Playbook to Install Prometheus and Grafana
+#  hosts: grafana.stageinternal.com
+#  become: true
+ # remote_user: ec2-user
+  #roles:
+   # - prometheus-grafana
+    
+#- name: Playbook to Install kube Service (eksctl,kubectl,helm,aws-iam-authenticator) 
+#  hosts: kube22.stageinternal.com
+ # become: true
+  #remote_user: ec2-user
+  #roles:
+   # - kube
+    #- metric-server
+    #- cluster-autoscaler
+    #- AWSLoadBalancerController
+    #- argo_cd
+    #- argocd-applications    

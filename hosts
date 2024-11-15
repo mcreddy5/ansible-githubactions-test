@@ -1,0 +1,41 @@
+[opsmanager.stageinternal.com]
+ 34.216.31.249
+
+[rabbitMQ.stageinternal.com]
+#rabbitMQ1.stageinternal.com
+#rabbitMQ2.stageinternal.com
+ 34.220.223.49
+
+
+
+[postgres.stageinternal.com]
+#postgres.stageinternal.com
+
+[elk.stageinternal.com]
+#10.60.29.40
+
+[grafana.stageinternal.com]
+#grafana.stageinternal.com
+
+[hc1.stageinternal.com]
+#hc1.stageinternal.com
+#hc2.stageinternal.com
+
+
+
+
+[mongo.stageinternal.com]
+#mongo1.stageinternal.com
+#mongo2.stageinternal.com
+
+
+
+[kube22.stageinternal.com]
+#kube22.stageinternal.com
+
+[bastion.stageinternal.com]
+#bastion.stageinternal.com
+#10.100.67.52
+#[all:vars]
+#ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+#ansible_python_interpreter='/usr/bin/python3'

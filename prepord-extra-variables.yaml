@@ -1,0 +1,33 @@
+# Global Variables
+aws_account_id: 769294742237
+aws_region: "us-east-1"
+eks_cluster_name: "preprod-rev-eks-cluster"
+
+# Variables for argocd
+argocd_loadbalancer_name: "pre-prod-argocd-new"
+priv_subnetid: "subnet-0c5ac6a8fc01b14c7, subnet-03118fae0780bdf24"
+argocd_admin_password: "revlitix@123"
+argocd_user_password: "revlitix@123"
+users_list_for_argocd: [ 'pre-prod-1', 'pre-prod-2' ]
+
+# Variables for AWSLoadBalancerController
+AmazonEKSLoadBalancerControllerRole_name: "AmazonEKSLoadBalancerControllerRole-preprod-eks-cluster-new-rev"
+AWSLoadBalancerControllerIAMPolicy_name: "AWSLoadBalancerControllerIAMPolicy-preprod-eks-cluster-new-rev"
+
+# Variables for cluster-autoscaler
+eks_version: "1.25"
+cluster_autoscaler_version: "1.25.3"
+AmazonEKSClusterAutoscalerPolicy_name: "AmazonEKSClusterAutoscalerPolicy-preprod-eks-cluster"
+resource_cpu_limits: 600
+resource_memory_limits: 900
+resource_cpu_requests: 100
+resource_memory_requests: 500
+
+# Variables for eks-prometheus
+install_alertmanager: true
+persistent_volume_size: 8
+prometheus_service_type: "NodePort"
+
+# Variables for AWS-AUTH
+#users_list_for_aws_auth: [ 'naveend','prem-optit' ]
+

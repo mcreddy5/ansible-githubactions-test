@@ -1,0 +1,39 @@
+# Global Variables
+aws_account_id: 769294742237
+aws_region: "us-east-2"
+eks_cluster_name: "rev-dev-eks-cluster-new"
+
+# Variables for argocd
+argocd_loadbalancer_name: "dev-argocd"
+public_subnetid: "subnet-0f55335b3f0da3a46, subnet-0b337335f158e8740"
+argocd_admin_password: "Revlitix@123"
+argocd_user_password: "revlitix@123"
+users_list_for_argocd: [ 'prem', 'bharath' ]
+
+# Variables for AWSLoadBalancerController
+AmazonEKSLoadBalancerControllerRole_name: "AmazonEKSLoadBalancerControllerRole-rev-dev-eks-cluster-new"
+AWSLoadBalancerControllerIAMPolicy_name: "AWSLoadBalancerControllerIAMPolicy-rev-dev-eks-cluster-new"
+
+# Variables for cluster-autoscaler
+eks_version: "1.25"
+cluster_autoscaler_version: "1.25.3"
+AmazonEKSClusterAutoscalerPolicy_name: "AmazonEKSClusterAutoscalerPolicy-rev-dev-eks-cluster-new"
+resource_cpu_limits: 600
+resource_memory_limits: 900
+resource_cpu_requests: 100
+resource_memory_requests: 500
+
+# Variables for eks-prometheus
+#install_alertmanager: true
+#persistent_volume_size: 8
+#prometheus_service_type: "NodePort"
+
+# Variables for AWS-AUTH
+#users_list_for_aws_auth: [ 'naveend', 'prem-optit' ]
+
+# Variables for Fluent-bit
+#elasticsearch_http_user: "elastic"
+#elasticsearch_http_passwd: "O7GPSyI2SGlJj5F9WLbC"
+#elasticsearch_host:\
+#elasticsearch_host_port: "9200"
+#elasticsearch_index_name: 
