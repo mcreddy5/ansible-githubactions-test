@@ -1,0 +1,5 @@
+- name: Copy public key
+  authorized_key:
+    user: ec2-user
+    state: present
+    key: "{{ lookup('file', '/home/ubuntu/.ssh/id_rsa.pub') }}"

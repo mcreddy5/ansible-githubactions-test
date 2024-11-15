@@ -1,0 +1,10 @@
+- name: copy public key from controller node to remote nodes
+  hosts: all
+  gather_facts: no 
+  tasks:
+    - name: add the public key to authorized_keys using Ansible module
+      authorized_key:
+        user: ec2-user 
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+

@@ -1,0 +1,17 @@
+---
+# tasks file for eks-prometheus
+- name: Add helm repo
+  shell: "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
+
+
+- name: Create prometheus namespace
+  shell: "kubectl create namespace prometheus"
+
+- name: Deploy prometheus
+  shell: "helm install prometheus prometheus-community/prometheus --namespace prometheus"
+
+
+- name: patch node_exporter to run in all nodes
+  shell: "kubectl patch ds prometheus-node-exporter -n prometheus -p ' { \"spec\": { \"template\": { \"spec\": { \"tolerations\": [ { \"key\": \"node-role.kubernetes.io/master\", \"operator\": \"Exists\", \"effect\": \"NoSchedule\" }, { \"operator\": \"Exists\", \"effect\": \"NoSchedule\" }, { \"operator\": \"Exists\", \"effect\": \"NoExecute\" } ] } } } }'"  
+
+

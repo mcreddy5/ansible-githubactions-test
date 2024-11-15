@@ -1,0 +1,11 @@
+---
+# defaults file for cluster-autoscaler
+aws_account_id: ""
+aws_region: ""
+eks_cluster_name: ""
+eks_version: ""
+AmazonEKSClusterAutoscalerPolicy_name: ""
+resource_cpu_limits: ""
+resource_memory_limits: ""
+resource_cpu_requests: ""
+resource_memory_requests: ""

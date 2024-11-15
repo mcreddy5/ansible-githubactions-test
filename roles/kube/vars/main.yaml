@@ -1,0 +1,21 @@
+aws_cli_download_url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-{{ aws_cli_version }}.zip"
+
+aws_cli_version: '2.0.30'
+
+download_path: "/tmp"
+
+bin_dir_path: "/usr/local/bin"
+
+authenticator_download_url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator"
+
+
+kubectl_version: "https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl"
+
+helm_latest_version: "3.8.1"
+
+helm_latest_url: "https://get.helm.sh/helm-v{{ helm_latest_version }}-linux-amd64.tar.gz"
+
+helm_latest_script: "curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
+
+eksctl_version: "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_{{ ansible_system | lower }}_amd64.tar.gz"
+

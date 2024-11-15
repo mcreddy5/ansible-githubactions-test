@@ -1,0 +1,48 @@
+- name: Install openjdk Java-11 version
+  shell: amazon-linux-extras install java-openjdk11 -y
+
+- name: Download hazelcast latest binary
+  get_url:
+    url: "https://github.com/hazelcast/hazelcast/releases/download/v5.0.2/hazelcast-5.0.2.tar.gz"
+    dest: "{{ hc_installation_dir }}"
+    mode: '0755'
+
+- name: Install hazelcast latest binary
+  unarchive:
+    src: "{{ hc_installation_dir }}/hazelcast-5.0.2.tar.gz"
+    dest: "{{ hc_installation_dir }}"
+    remote_src: yes
+
+      #- name: Create systemd service file for Hazelcast
+      #  template:
+      #    dest: "/etc/systemd/system/hazelcast.service"
+      #    src: "hazelcast.service.j2"
+
+- name: Create systemd service file for Hazelcast-Mancenter
+  template:
+    dest: "/etc/systemd/system/hazelcast_mancenter.service"
+    src: "hazelcast_mancenter.service.j2"
+      # when: inventory_hostname == 'hcm.stageinternal.com'
+
+    #- name: Replace IP address in hazelcast.xml
+    #  replace:
+    #    path: "{{ hc_installation_dir }}/hazelcast-5.0.2/config/hazelcast.xml"
+    #    regexp: '<interface>127.0.0.1</interface>'
+    #    replace: '<interface>{{ hazelcast_ip }}</interface>'
+    #    backup: yes
+
+- name: Reload systemd to apply configuration changes
+  systemd:
+    daemon_reload: yes
+
+- name: Start the Hazelcast Mancenter Service
+  service:
+    name: hazelcast_mancenter
+    state: started
+      #when: inventory_hostname == 'hcm.stageinternal.com'
+
+    #- name: Start the Hazelcast Service
+    #  service:
+    #    name: hazelcast
+    #    state: started
+

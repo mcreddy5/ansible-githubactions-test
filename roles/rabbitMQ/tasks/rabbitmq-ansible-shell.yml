@@ -1,0 +1,87 @@
+---
+# playbook to install rabbitMQ
+- name: Gather the package fatcs
+  package_facts:
+    manager: auto
+
+- name: Update
+  yum:
+    update_cache: true
+
+- name: check whether a package called Erlang installed
+  debug:
+    msg: "Erlang installed already"
+  when: "'erlang' in ansible_facts.packages"
+
+- name: Download Erlang rpm file
+  get_url:
+    url: "{{download_link_erlang}}"
+    dest: /tmp/
+    #remote_src: True
+
+- name: Install the Erlang package via yum
+  yum:
+    name: "/tmp/erlang-{{erlang_version}}-1.el7.x86_64.rpm"
+    state: present
+  changed_when: "'erlang' not in ansible_facts.packages"
+
+- name: check whether a package called RabbitMQ server installed
+  debug:
+    msg: "RabbitMQ server installed already"
+  when: "'rabbitmq-server' in ansible_facts.packages"
+
+- name: Download RabbitMQ rpm file
+  get_url:
+    url: "{{download_link_rabbitmq}}"
+    dest: /tmp/
+    #remote_src: True
+
+- name: Install the RabbitMQ package via yum
+  yum:
+    name: "/tmp/rabbitmq-server-{{rabbitmq_version}}-1.el7.noarch.rpm"
+    state: present
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Start service rabbitmq-server and enable it
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: yes
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Enable rabbitmq_management plugins
+  shell:
+    cmd: rabbitmq-plugins enable rabbitmq_management
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Create Virtual Host
+  shell:
+    cmd: rabbitmqctl add_vhost {{env}}
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Create admin user for RabbitMQ
+  shell:
+    cmd: rabbitmqctl add_user {{rabbitmq_admin_username}} {{rabbitmq_admin_password}}
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+  ignore_errors: true
+
+- name: Set admin user assignment operation permissions
+  shell:
+    cmd: rabbitmqctl set_user_tags {{rabbitmq_admin_username}} administrator
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Add resource permissions to / vhost admin user 
+  shell:
+    cmd: rabbitmqctl set_permissions -p / {{rabbitmq_admin_username}} ".*" ".*" ".*"
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Add resource permissions to /{{env}} vhost admin user
+  shell:
+    cmd: rabbitmqctl set_permissions -p {{env}} {{rabbitmq_admin_username}} ".*" ".*" ".*"
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Deleting default user from RabbitMQ
+  shell:
+    cmd: rabbitmqctl delete_user guest
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+  ignore_errors: true

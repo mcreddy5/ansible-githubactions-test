@@ -1,0 +1,7 @@
+mongodb_agent_url: 'http://{{ ops_manager_ip }}:8080/download/agent/automation/mongodb-mms-automation-agent-manager-10.14.30.6552-1.x86_64.rhel7.rpm'
+
+ops_manager_ip: '10.60.30.47'
+
+mms_group_id: '' 
+
+project_mms_api_key: '' 

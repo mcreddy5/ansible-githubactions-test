@@ -1,0 +1,11 @@
+[Unit]
+Description=hazelcast
+Before=
+After=network.target
+
+[Service]
+ExecStart={{ hc_installation_dir }}/hazelcast-{{ hc_version }}/management-center/bin/start.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

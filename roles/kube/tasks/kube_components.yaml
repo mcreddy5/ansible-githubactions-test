@@ -1,0 +1,124 @@
+# task to install latest aws cli version
+#- name: Install latest AWS CLI version
+ # uri:
+  #  url: "{{ aws_cli_download_url }}"
+   # dest: "{{ download_path }}/awscli.zip"
+  #ignore_errors: true
+
+#- name: Unzip the aws-cli installer
+ # unarchive:
+ #   src: "{{ download_path }}/awscli.zip"
+  #  dest: "{{ download_path }}"
+  # remote_src: yes
+
+#- name: run the install program to install aws cli
+#  command: "{{ download_path }}/aws/install"
+#  ignore_errors: true
+
+# task to install ima-authenticator
+- name: Install aws-iam-authenticator
+  uri:
+    url: "{{ authenticator_download_url }}"
+    dest: "{{ download_path }}"
+  ignore_errors: true
+
+- name: Apply execute permissions to the binary
+  file:
+    path: "{{ download_path }}/aws-iam-authenticator"
+    mode: '555'
+
+- name: copy binary to bin directory
+  copy:
+    src: "{{ download_path }}/aws-iam-authenticator"
+    dest: "{{ bin_dir_path }}"
+    remote_src: yes
+    owner: ec2-user
+    group: ec2-user
+    mode: '555'  
+  become: true
+  become_user: root
+      
+# task to install kubectl
+- name: Install kubectl
+  uri:
+    url: "{{ kubectl_version }}"
+    dest: "{{ download_path }}"
+  ignore_errors: true
+
+- name: Apply execute permissions to the binary
+  file:
+    path: "{{ download_path }}/kubectl"
+    mode: '555'
+
+- name: copy binary to bin directory
+  copy:
+    src: "{{ download_path }}/kubectl"
+    dest: "{{ bin_dir_path }}"
+    remote_src: yes
+    owner: ec2-user
+    group: ec2-user
+    mode: '555'
+  become: true
+  become_user: root
+
+# helm install helm
+- name: Download latest Helm version
+  uri:
+    url: "{{ helm_latest_url }}"
+    dest: "{{ download_path }}/"
+  ignore_errors: true
+- name: Untar helm 
+  unarchive:
+    src: "{{ download_path }}/helm-v{{ helm_latest_version }}-linux-amd64.tar.gz"
+    dest: "{{ download_path }}/"
+    remote_src: yes
+  ignore_errors: true
+
+- name: Move helm binary to usr/local/bin directory
+  copy:
+    src: "{{ download_path }}/linux-amd64/helm"
+    dest: "{{ bin_dir_path }}"
+    remote_src: yes
+    mode: '555'
+    owner: ec2-user
+    group: ec2-user
+  become: true
+  become_user: root    
+# task to install eksctl
+- name: Downlaod eksctl version
+  uri: 
+    url: "{{ eksctl_version }}"
+    dest: "{{ download_path }}"
+  ignore_errors: true
+- name: Untar eksctl
+  unarchive:
+    src: "{{ download_path }}/eksctl_{{ansible_system | lower }}_amd64.tar.gz"
+    dest: "{{ download_path }}/"
+    remote_src: yes
+  ignore_errors: true  
+
+- name: move eksctl to /usr/local/bin
+  copy:
+    src: "{{ download_path }}/eksctl"
+    dest: "{{ bin_dir_path }}"
+    remote_src: yes
+    mode: '0555'
+    owner: ec2-user
+    group: ec2-user  
+  become: true
+  become_user: root
+#install terraform
+- name: Install yum-utils
+  ansible.builtin.yum:
+    name: yum-utils
+    state: present
+
+- name: Add HashiCorp repository
+  ansible.builtin.shell:
+    cmd: "sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo"
+
+- name: Install Terraform
+  ansible.builtin.yum:
+    name: terraform
+    state: present
+

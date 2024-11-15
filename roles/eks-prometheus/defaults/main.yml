@@ -1,0 +1,5 @@
+---
+# defaults file for eks-prometheus
+install_alertmanager: ""
+persistent_volume_size: ""
+prometheus_service_type: ""

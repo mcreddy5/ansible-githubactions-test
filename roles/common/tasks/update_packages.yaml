@@ -1,0 +1,8 @@
+- name: Update all system packages
+  yum:
+    name: "*"
+    state: latest
+    #update_cache: yes
+
+- name: Enable the Extra Packages (EPEL) repository
+  shell: "amazon-linux-extras install epel -y"

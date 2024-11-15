@@ -1,0 +1,6 @@
+---
+# defaults file for fluent-bit
+elasticsearch_http_user: ""
+elasticsearch_http_passwd: ""
+elasticsearch_host: ""
+elasticsearch_host_port: ""

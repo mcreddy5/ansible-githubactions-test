@@ -1,0 +1,32 @@
+serviceName: "prometheus"
+
+prometheus_user_id: "prometheus"
+
+prometheus_group_id: "prometheus"
+
+prometheus_download_url: "https://github.com/prometheus/prometheus/releases/download/v{{ version }}/prometheus-{{ version }}.linux-amd64.tar.gz"
+
+prometheus_download_dir: "/opt"
+
+local_binary_path: "/usr/local/bin"
+
+prometheus_binary_path: "{{ prometheus_download_dir }}/prometheus-{{ version }}.linux-amd64/prometheus"
+
+prometheus_data_dir_path: "/etc/prometheus/data"
+
+prometheus_yaml_config_path: "/etc/prometheus/prometheus.yml"
+
+prometheus_service_file_path: "/etc/systemd/system/prometheus.service"
+
+exec_command: "/usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/etc/prometheus/data --storage.tsdb.retention.time=60d"
+
+version: "2.20.1"
+
+prometheus_check_url: "http://localhost:9090"
+
+host: "localhost"
+
+grafana_repo_path: "/etc/yum.repos.d/grafana.repo"
+
+datasources:
+        - { name: Prometheus, hostname: localhost, port: 9090, editable: True, default: True } 

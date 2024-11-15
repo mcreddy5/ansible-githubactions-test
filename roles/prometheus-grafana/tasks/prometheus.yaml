@@ -1,0 +1,70 @@
+##playbook to install prometheus
+- name: Create user group for prometheus
+  group:
+    name: "{{ prometheus_group_id }}"
+
+- name: Create prometheus user
+  user:
+    name: "{{ prometheus_user_id }}"
+    group: "{{ prometheus_group_id}}"
+    system: yes
+    comment: "nologin user"
+    createhome: "no"
+    state: present
+
+- name: Download prometheus archive file and untar it
+  unarchive:
+    src: "{{ prometheus_download_url }}"
+    dest: "{{ prometheus_download_dir }}"
+    remote_src: yes
+
+- name: Copy prometheus binary file to /usr/local/bin directory
+  copy:
+    src: "{{ prometheus_binary_path }}"
+    dest: "{{ local_binary_path }}"
+    owner: "{{ prometheus_user_id }}"
+    group: "{{ prometheus_group_id }}"
+    remote_src: yes
+    mode: 0755
+
+- name: Creates directory for prometheus configuration file
+  file:
+    path: "{{ prometheus_data_dir_path }}"
+    state: directory
+    owner: "{{ prometheus_user_id }}"
+    group: "{{ prometheus_group_id }}"
+    mode: 0755
+
+- name: copy prometheus sample config file to remote
+  template:
+    src: prometheus.yml.j2
+    dest: "{{ prometheus_yaml_config_path }}"
+    mode: 0755
+
+- name: Copy systemd init prometheus file to remote
+  template:
+    src: prometheus.service.j2
+    dest: "{{ prometheus_service_file_path }}"
+    mode: 0755
+  notify: systemd_reload
+
+- name: Start and enable prometheus service
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: Check if prometheus is accessible
+  uri:
+    url: "{{ prometheus_check_url }}"
+    method: GET
+    status_code: '200'
+  ignore_errors: true
+
+#- name: Update hosts file
+#  blockinfile:
+#    path: "/etc/hosts"
+#    block: |
+#      {% for host in groups['all'] %}
+#      {{ hostvars[host].ipv4_address|default(hostvars[host]['ansible_default_ipv4']['address']) }} {{ hostvars[host]['ansible_hostname'] }}
+#      {% endfor %}

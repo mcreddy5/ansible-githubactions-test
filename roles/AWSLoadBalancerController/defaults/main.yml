@@ -1,0 +1,7 @@
+---
+# defaults file for AWSLoadBalancerController
+aws_account_id: ""
+aws_region: ""
+eks_cluster_name: ""
+AmazonEKSLoadBalancerControllerRole_name: ""
+AWSLoadBalancerControllerIAMPolicy_name: ""

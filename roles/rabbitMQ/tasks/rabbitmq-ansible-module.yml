@@ -1,0 +1,94 @@
+---
+# playbook to install rabbitMQ
+- name: Gather the package fatcs
+  package_facts:
+    manager: auto
+
+- name: Update
+  yum:
+    update_cache: true
+
+- name: check whether a package called Erlang installed
+  debug:
+    msg: "Erlang installed already"
+  when: "'erlang' in ansible_facts.packages"
+
+- name: Download Erlang rpm file
+  get_url:
+    url: "{{download_link_erlang}}"
+    dest: /tmp/
+    #remote_src: True
+
+- name: Install the Erlang package via yum
+  yum:
+    name: "/tmp/erlang-{{erlang_version}}-1.el7.x86_64.rpm"
+    state: present
+  changed_when: "'erlang' not in ansible_facts.packages"
+
+- name: check whether a package called RabbitMQ server installed
+  debug:
+    msg: "RabbitMQ server installed already"
+  when: "'rabbitmq-server' in ansible_facts.packages"
+
+- name: Download RabbitMQ rpm file
+  get_url:
+    url: "{{download_link_rabbitmq}}"
+    dest: /tmp/
+    remote_src: True
+
+- name: Install the RabbitMQ package via yum
+  yum:
+    name: "/tmp/rabbitmq-server-{{rabbitmq_version}}-1.el7.noarch.rpm"
+    state: present
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Start service rabbitmq-server and enable it
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: yes
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Enable rabbitmq_management plugins
+  shell:
+    cmd: rabbitmq-plugins enable rabbitmq_management
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Create Virtual Host
+  rabbitmq_vhost:
+    name: "{{env}}"
+    state: present
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+
+- name: Create admin user for rabbitMQ
+  rabbitmq_user:
+    user: "{{rabbitmq_admin_username}}"
+    password: "{{rabbitmq_admin_password}}"
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+    state: present
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+  ignore_errors: true
+
+- name: Create admin user for rabbitMQ
+  rabbitmq_user:
+    user: "{{rabbitmq_admin_username}}"
+    password: "{{rabbitmq_admin_password}}"
+    vhost: "{{env}}"
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    tags: administrator
+    state: present
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+  ignore_errors: true
+
+- name: Delete default user for rabbitMQ
+  rabbitmq_user:
+    user: guest
+    state: absent
+  changed_when: "'rabbitmq-server' not in ansible_facts.packages"
+  ignore_errors: true

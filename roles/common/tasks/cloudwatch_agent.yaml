@@ -1,0 +1,67 @@
+# playbook to install amazon cloudwatch agent
+- name: Gather the package fatcs
+  package_facts:
+    manager: auto
+
+- name: check whether a package called amazon-cloudwatch-agent installed
+  debug:
+    msg: "Amzon cloudwatch agent installed already"
+  when: "'amazon-cloudwatch-agent' in ansible_facts.packages"
+
+- name: Create directory for node exporter agent or ignore if dir exists
+  file:
+    path: "{{ exporter_dir }}"
+    state: directory
+    owner: root
+    mode: 0755
+  ignore_errors: true
+
+- name: Download cloudwatch agent rpm file
+  get_url:
+    url: "{{ download_link_agent }}"
+    dest: "{{ exporter_dir }}"
+
+- name: Install the package via yum
+  yum:
+    name: "{{ exporter_dir }}/amazon-cloudwatch-agent.rpm"
+    state: present
+  changed_when: "'amazon-cloudwatch-agent' not in ansible_facts.packages"
+
+- name: create missing directories
+  file:
+    path: "/usr/share/collectd"
+    state: directory
+    mode: 0755
+    owner: root
+
+- name: create missing file
+  file:
+    path: "/usr/share/collectd/types.db"
+    state: touch
+    owner: root
+    mode: 0755
+
+- name: Create agent config file
+  template:
+    src: "amazon-cloudwatch-agent-config-json.j2"
+    dest: "/opt/aws/amazon-cloudwatch-agent/bin/config.json"
+    owner: root
+    mode: 0644
+
+- name: start and enable amazoncloudwatch agent
+  command: "{{ start_cloudwatch_agent }}"
+
+- name: Configure log rotate for amazon-cloudwatch-agent-log
+  copy:
+    dest: "/etc/logrotate.d/aws-cwa"
+    owner: "root"
+    mode: 0644
+    content: |
+      /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
+      {
+          size 50M
+          rotate 5
+          compress
+          missingok
+          copytruncate
+      }

@@ -1,0 +1,29 @@
+- name: Download mongodb mms agent binary 
+  uri:
+    url: "{{ mongodb_agent_url }}"
+    dest: /tmp 
+  
+- name: Install mongodb mms agent 
+  yum:
+    name: /tmp/mongodb-mms-automation-agent-manager-10.14.30.6552-1.x86_64.rhel7.rpm
+    state: present 
+
+- name: Update mms agent config file 
+  template:
+    dest: '/etc/mongodb-mms/automation-agent.config'
+    src: mms.conf.j2
+
+- name: Create data directories
+  file: 
+    state: directory
+    dest: /data
+    owner: mongod 
+    group: mongod 
+    mode: 0755
+
+- name: Start the mms agent 
+  service:
+    name: mongodb-mms-automation-agent
+    state: started
+    enabled: yes
+    

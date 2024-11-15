@@ -1,0 +1,5 @@
+---
+# tasks file for aws-auth
+- name: Add user to access resources in aws console
+  shell: "eksctl create iamidentitymapping --cluster {{ eks_cluster_name }} --region={{ aws_region }} --arn arn:aws:iam::939178415097:user/{{ item }} --username {{ item }} --group system:masters --no-duplicate-arns"
+  loop: "{{ users_list_for_aws_auth }}"

@@ -1,0 +1,44 @@
+---
+# tasks file for AWSLoadBalancerController
+- name: Copy IAM policy JSON file
+  template:
+    src: iam_policy.json.j2
+    dest: /tmp/iam_policy.json
+
+- name: Create an IAM policy
+  shell: "aws iam create-policy --policy-name {{ AWSLoadBalancerControllerIAMPolicy_name }} --policy-document file:///tmp/iam_policy.json"
+  ignore_errors: yes
+
+- name: Create an IAM OIDC identity provider for your cluster
+  shell: "eksctl utils associate-iam-oidc-provider --cluster {{ eks_cluster_name }} --region {{ aws_region }} --approve"
+  ignore_errors: yes
+
+- name: Ceate a serviceaccount
+  shell: "eksctl create iamserviceaccount --cluster={{ eks_cluster_name }} --region={{ aws_region }} --namespace=kube-system --name=aws-load-balancer-controller --role-name \"{{ AmazonEKSLoadBalancerControllerRole_name }}\" --attach-policy-arn=arn:aws:iam::{{ aws_account_id }}:policy/{{ AWSLoadBalancerControllerIAMPolicy_name }} --approve"
+
+- name: Copy cert-manager for ALB controller file
+  template:
+    src: cert-manager.yaml.j2
+    dest: /tmp/cert-manager.yaml
+
+- name: Deploy cert-manager for ALB controller
+  shell: "kubectl apply --validate=false -f /tmp/cert-manager.yaml"
+
+- name: Wait for 15 secs to deploy cert-manager
+  shell: sleep 15
+
+- name: Copy ALB controller yaml file
+  template:
+    src: v2_4_3_full.yaml.j2
+    dest: /tmp/v2_4_3_full.yaml
+
+- name: Install the controller
+  shell: "kubectl apply -f /tmp/v2_4_3_full.yaml"
+
+- name: Copy ingclass file for ALB controller
+  template:
+    src: v2_4_3_ingclass.yaml.j2
+    dest: /tmp/v2_4_3_ingclass.yaml
+
+- name: Apply the IngressClass and IngressClassParams manifest to your cluster
+  shell: "kubectl apply -f /tmp/v2_4_3_ingclass.yaml"

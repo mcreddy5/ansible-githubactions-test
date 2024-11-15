@@ -1,0 +1,5 @@
+---
+# defaults file for aws-auth
+users_list_for_aws_auth: ""
+eks_cluster_name: ""
+aws_region: ""

@@ -1,0 +1,28 @@
+---
+# tasks file for cluster-autoscaler
+- name: Create an IAM OIDC identity provider for your cluster
+  shell: "eksctl utils associate-iam-oidc-provider --cluster {{ eks_cluster_name }} --region {{ aws_region }} --approve"
+  ignore_errors: yes
+
+- name: Copy cluster-autoscaler-policy file
+  template:
+    src: cluster-autoscaler-policy.json.j2
+    dest: /tmp/cluster-autoscaler-policy.json
+
+- name: Create the cluster-autoscaler-policy
+  shell: "aws iam create-policy --policy-name {{ AmazonEKSClusterAutoscalerPolicy_name }} --policy-document file:///tmp/cluster-autoscaler-policy.json"
+  ignore_errors: yes
+
+- name: Create IAM Service Account
+  shell: "eksctl create iamserviceaccount --cluster={{ eks_cluster_name }} --region={{ aws_region }} --namespace=kube-system --name=cluster-autoscaler --attach-policy-arn=arn:aws:iam::{{ aws_account_id }}:policy/{{ AmazonEKSClusterAutoscalerPolicy_name }} --override-existing-serviceaccounts --approve"
+
+- name: Copy the Cluster Autoscaler YAML file template
+  template:
+    src: cluster-autoscaler-autodiscover.yaml.j2
+    dest: /tmp/cluster-autoscaler-autodiscover.yaml
+
+- name: Apply Cluster Autoscaler YAML file
+  shell: "kubectl apply -f /tmp/cluster-autoscaler-autodiscover.yaml"
+
+- name: Patch the deployment to add the cluster-autoscaler.kubernetes.io/safe-to-evict annotation to the Cluster Autoscaler pods
+  shell: "kubectl patch deployment cluster-autoscaler -n kube-system -p '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"cluster-autoscaler.kubernetes.io/safe-to-evict\": \"false\"}}}}}'"

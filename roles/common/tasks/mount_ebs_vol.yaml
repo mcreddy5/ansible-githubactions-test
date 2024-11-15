@@ -1,0 +1,47 @@
+#- name: Mount data volume to instance
+ # shell: |
+  #  export deviceid=$(lsblk | egrep 'nvme1n1|xvdh' | awk '{print $1}')
+   # mkfs -t xfs /dev/$deviceid
+    #mkdir /data 
+    #mount /dev/$deviceid /data
+  #ignore_errors: true
+---
+---
+- name: Check if the data volume is already mounted
+  command: mountpoint -q /data
+  register: mount_check
+  ignore_errors: true
+
+- name: Identify data volume
+  shell: |
+    lsblk -o NAME,TYPE,MOUNTPOINT | grep -E 'disk|part' | grep -E 'nvme1n1|xvdh' | awk '$3=="" {print "/dev/"$1}'
+  register: data_volume
+  changed_when: false
+
+- name: Ensure the data volume is formatted with XFS
+  shell: mkfs -t xfs -f {{ data_volume.stdout }}
+  when: data_volume.stdout != "" and not mount_check.rc == 0
+  ignore_errors: true
+
+- name: Create /data directory if it does not exist
+  file:
+    path: /data
+    state: directory
+  when: data_volume.stdout != ""
+
+- name: Mount the data volume to /data
+  mount:
+    path: /data
+    src: "{{ data_volume.stdout }}"
+    fstype: xfs
+    opts: defaults
+    state: mounted
+  when: data_volume.stdout != ""
+
+- name: Ensure data volume is added to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    line: "{{ data_volume.stdout }} /data xfs defaults 0 0"
+    create: yes
+  when: data_volume.stdout != "" and not mount_check.rc == 0
+

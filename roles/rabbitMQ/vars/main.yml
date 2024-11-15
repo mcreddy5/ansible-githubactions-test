@@ -1,0 +1,9 @@
+---
+# vars file for rabbitMQ
+erlang_version: 23.3.4.11
+download_link_erlang: https://github.com/rabbitmq/erlang-rpm/releases/download/v{{erlang_version}}/erlang-{{erlang_version}}-1.el7.x86_64.rpm
+rabbitmq_version: 3.9.13
+download_link_rabbitmq: https://github.com/rabbitmq/rabbitmq-server/releases/download/v{{rabbitmq_version}}/rabbitmq-server-{{rabbitmq_version}}-1.el7.noarch.rpm
+env: rabbitmq
+rabbitmq_admin_username: admin
+rabbitmq_admin_password: revlitix@2023

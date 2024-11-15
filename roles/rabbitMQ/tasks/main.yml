@@ -1,0 +1,4 @@
+---
+# playbook to install rabbitMQ
+- name: Include rabbitMQ-ansible-module yml
+  include: rabbitmq-ansible-shell.yml

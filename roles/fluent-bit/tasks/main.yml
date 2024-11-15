@@ -1,0 +1,33 @@
+---
+# tasks file for fluent-bit
+- name: Create ns logging
+  shell: "kubectl create ns logging"
+
+- name: Copy files for role, rolebinding and serviceaccount
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+  loop:
+     - fluent-bit-role-binding-1.22.yaml
+     - fluent-bit-role-1.22.yaml
+     - fluent-bit-service-account.yaml
+
+- name: Copy templates for ds
+  template:
+    src: "fluent-bit-ds.yaml.j2"
+    dest: "/tmp/fluent-bit-ds.yaml"
+
+- name: Copy template for cm
+  template:
+    src: "fluent-bit-configmap.yaml.j2"
+    dest: "/tmp/fluent-bit-configmap.yaml"
+
+- name: Deploy fluent-bit
+  shell: "kubectl apply -f /tmp/{{ item }}"
+  loop:
+    - fluent-bit-service-account.yaml
+    - fluent-bit-role-1.22.yaml
+    - fluent-bit-role-binding-1.22.yaml
+    - fluent-bit-configmap.yaml
+    - fluent-bit-ds.yaml
+

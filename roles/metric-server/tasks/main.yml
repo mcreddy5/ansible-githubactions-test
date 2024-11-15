@@ -1,0 +1,9 @@
+---
+# tasks file for metric-server
+- name: Copy components yaml file
+  template:
+    src: components.yaml.j2
+    dest: /tmp/components.yaml
+
+- name: Install metric server in EKS Cluster
+  shell: /usr/local/bin/kubectl apply -f /tmp/components.yaml

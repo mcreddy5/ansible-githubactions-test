@@ -1,0 +1,3 @@
+---
+# defaults file for metric-server
+#metric-server-url: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml

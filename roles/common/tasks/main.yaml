@@ -1,0 +1,7 @@
+- include: update_packages.yaml
+
+- include: node_exporter.yaml
+
+- include: cloudwatch_agent.yaml 
+
+- include: mount_ebs_vol.yaml

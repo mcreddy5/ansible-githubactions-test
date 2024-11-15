@@ -1,0 +1,16 @@
+---
+- name: Add the PostgreSQL repository
+  shell: sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release
+    -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+- name: Add the PostgreSQL APT key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+- name: Update apt cache
+  apt: update_cache=yes
+- name: Install PostgreSQL
+  apt:
+    name: postgresql
+    state: present
+- name: enable the service
+  shell: 'sudo systemctl enable postgresql.service'

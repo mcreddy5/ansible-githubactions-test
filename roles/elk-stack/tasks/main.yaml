@@ -1,0 +1,9 @@
+
+- name: play to instal elasticearch
+  include: elasticsearch.yaml
+
+#- name: play to install logstash
+#  include: logstash.yaml
+
+- name: play to install kibana
+  include: kibana.yaml

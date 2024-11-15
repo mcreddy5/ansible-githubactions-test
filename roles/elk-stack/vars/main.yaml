@@ -1,0 +1,19 @@
+# elk vars
+elk_version: "8.x"
+
+rpm_key_elk: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+
+elasticsearch_repo_path: "/etc/yum.repos.d/elasticearch.repo"
+
+kibana_repo_path: "/etc/yum.repos.d/kibana.repo"
+
+logstash_repo_path: "/etc/yum.repos.d/logstash.repo"
+
+#for the elastisearch.yml config
+path_data: "/data"
+network_host: "0.0.0.0"
+#for kibana.yml config
+server_host: "0.0.0.0"
+server_publicBaseUrl: "http://10.60.29.40:5601"
+
+
