@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -27,4 +27,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
-          ansible-playbook -i hosts main.yaml --private-key="${{ secrets.EC2_SSH_KEY }}" -u "${{ secrets.EC2_USER }}" -vvvv
+          ansible-playbook -i hosts main.yaml -vvvv
