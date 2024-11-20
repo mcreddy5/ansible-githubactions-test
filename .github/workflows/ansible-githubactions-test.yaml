@@ -11,24 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
-
-      #- name: Set up Python
-       # uses: actions/setup-python@v4
-        #with:
-         # python-version: '3.x'
-
-      - name: Install pip if missing
-        run: |
-          python3 -m ensurepip --upgrade
-          python3 -m pip install --upgrade pip
-
-      - name: Install Ansible
-        run: |
-          python3 -m pip install ansible
+        uses: actions/checkout@v1  # Updated to the latest version
 
       - name: Run Ansible Playbook
         env:
-          ANSIBLE_HOST_KEY_CHECKING: 'False'
+          ANSIBLE_HOST_KEY_CHECKING: 'False'  # Disable host key checking
         run: |
-          ansible-playbook -i hosts main.yaml -vvvv
+          ansible-playbook -i hosts main.yaml -vvvv  # Run the playbook with verbose output
